@@ -1,115 +1,6 @@
 const crypto = require('crypto');
 
 
-user = [{
-        Nif :"296884391",
-        Email :"pvitorn18@gmail.com",
-        password : "paulo120",
-        name :"Paulo Tavares",
-        Number_Phone : "927678232",
-        token: "adnejfbenlfnbjrefn",
-        id_User:1
-    },
-    {
-        Nif :"987654321",
-        Email :"sofia18@gmail.com",
-        password : "sofia",
-        name :"carla",
-        Number_Phone : "927678232", // unique fields 
-        token:"fnejfnefnefienf",
-        id_User:2
-       
-    },
-    {
-        Nif :"123456789",
-        Email :"carla@gmail.com",
-        password : "carla",
-        name :"carla",
-        Number_Phone : "927678232", // unique fields 
-        token:"mkmkfefmefeflmblf",
-        id_User:3
-       
-    }
-]
-
-
-Orders = [
-    {
-        id_User:1,
-        id_Order:1,
-        order_Date :"28/10/2024",
-   
-    },
-
-    {
-        id_User:2,
-        id_Order:1,
-        order_Date :"28/10/2024",
-   
-    },
-    {
-        id_User:3,
-        id_Order:1,
-        order_Date :"28/10/2024",
-   
-    }
-
-]
-
-
-Product = [
-    {
-    id_Product :"1",
-    name_Product : "Maça",
-    description_Of_Product :" Maça para comer ",
-    amount_Product :" 10",
-    price_Product : "2EUR",
-    country_of_manufacture : "Portugal",
-    expiration_Date : "28/10/2026",
-    id_Order:1,
-
-},
-{
-    id_Product :"1",
-    name_Product : "Maça",
-    description_Of_Product :" Maça para comer ",
-    amount_Product :" 10",
-    price_Product : "2EUR",
-    country_of_manufacture : "Portugal",
-    expiration_Date : "28/10/2026",
-    id_Order:1,
-
-
-}]
-
-/*
-Stated_Paymment : [{
-    id_user,
-    id_order,
-    paymentDate,
-    typePayment // Dinheiro ou cartão
-}]
-*/
-/*
-AddresClient =[{
-    nifClient,
-    road,
-    city,
-    numberDoor,
-    numberFloor
-}]
-*/
-
-
-/*
-orderDelevery:{
-    datePaymment,
-    id_Order,
-    id_User,
-    cityDelevery
-
-}
-*/
 
 idUser =3
 module.exports ={
@@ -133,26 +24,60 @@ module.exports ={
 }  
 
 
-function createNewUser(Nif, Email, password, name, Number_Phone){
 
-    if (user.some(user => user.Nif === Nif)) return Promise.reject("expected user")
-    if (user.some(user => user.Email === Email)) return Promise.reject("expected user")
-    idUser++;
-    token = crypto.randomUUID()
-    newUser = {
-        Nif: Nif,
-        Email : Email,
-        password: password,
-        name : name,
-        Number_Phone: Number_Phone,
-        token: token,
-        idUser : idUser
 
+var mysql = require('mysql2');
+
+var connection = mysql.createConnection({   
+    host: 'localhost',  
+    user: 'root',  
+    password: '1234',  
+    database: 'test'
+})
+
+
+connection.connect(function(err) {
+    if(!!err){
+        console.error('Unable to connect to the database:', err);
+    }else{
+        console.log('Connection has been established successfully.');
     }
+})
 
-    user.push(newUser)  
-    return Promise.resolve(newUser)
+
+
+
+/*
+  Id integer,
+  name varchar(30) NOT NULL,
+  NIF integer unique,
+  email varchar(30) unique,
+  password varchar(30),
+  phone_number integer,
+  PRIMARY KEY(Id)
+
+*/
+
+function createNewUser(Nif, Email, password, name, Number_Phone){
+    return new Promise((resolve, reject) => {
+        connection.query(
+            `INSERT INTO Customer (Id, name, NIF, email, password, phone_number) 
+            VALUES (8, 'Paulo Tavares', 296884391, 'pvitorn18@gmail.com', 'paulo012', 927678232);`,
+            function(err, results, fields) {
+                if (err) {
+                    reject(err);
+                } else {
+                    console.log("dados inseridos com sucesso");
+                    console.log(results);
+                    resolve(results);
+                }
+            }
+        );
+    });
 }
+
+  
+
 
 function updateUser(token,Nif, Email, password, name, Number_Phone)
 {
